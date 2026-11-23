@@ -50,6 +50,7 @@ using AnoMech.Scenarios.Tea.P2BjCc;
 using AnoMech.Scenarios.Tea.P3AlexanderPrime;
 using AnoMech.Scenarios.Tea.P4PerfectAlexander;
 using AnoMech.Scenarios.Top.P6WaveCannon2;
+using AnoMech.Scenarios.Ucob.P4Adds;
 using AnoMech.Scenarios.Ucob.P5Exaflares;
 using AnoMech.Scenarios.Umad;
 using AnoMech.Scenarios.Umad.P1TeleTrouncing;
@@ -152,6 +153,7 @@ public sealed class ScenarioCatalog
         new UltimateAnnihilationScenario(),
         new UltimateSuppressionScenario(),
         new PrimalRouletteScenario(),
+        new UcobP4AddsScenario(),
         new UcobP5ExaflaresScenario(),
         new DsrP1KnightsScenario(),
         new DsrP2ThordanScenario(),
