@@ -30,6 +30,7 @@ using AnoMech.Scenarios.M9s.Flails;
 using AnoMech.Scenarios.M9s.HellInACell;
 using AnoMech.Scenarios.M9s.VampStomp;
 using AnoMech.Scenarios.M9s.VampStomp2;
+using AnoMech.Scenarios.Aloalo.LalaPlanarTactics;
 using AnoMech.Scenarios.Fru.P2DiamondDust;
 using AnoMech.Scenarios.Fru.P2LightRampant;
 using AnoMech.Scenarios.Fru.P3Apocalypse;
@@ -115,6 +116,11 @@ public sealed class ScenarioCatalog
 
     public static ScenarioCatalog Create() => new(
     [
+        new LalaPlanarRecordedSwAScenario(),
+        new LalaPlanarRecordedNwScenario(),
+        new LalaPlanarRecordedSwBScenario(),
+        new LalaPlanarRecordedNeGeometryScenario(),
+        new LalaPlanarSyntheticSeMirrorScenario(),
         new UmadP1TeleTrouncingScenario(),
         new UmadP2ForsakenScenario(),
         new UmadP3LimitCutScenario(),
