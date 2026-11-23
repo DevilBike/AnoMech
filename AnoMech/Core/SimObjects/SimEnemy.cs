@@ -75,7 +75,10 @@ public record struct EnemySpawnConfig(
     IReadOnlyList<SpawnStatus>? Statuses = null,
     byte ModelState = 0,
     // ModelScale row; retail sends 0 for most BNpcs.
-    byte ModelScale = 0);
+    byte ModelScale = 0,
+    // A whole NpcSpawn packet body used instead of the one built from this config (the fork's DSR
+    // knights, whose gear comes from NpcEquip); Placement still applies.
+    byte[]? NpcSpawnTemplate = null);
 
 public readonly record struct SpawnStatus(ushort StatusId, ushort Param = 0);
 
@@ -90,7 +93,7 @@ public sealed record NpcAppearance(
     // The 26 CustomizeData bytes.
     byte[]? Customize = null);
 
-public sealed class SimEnemy : SimNpc
+public sealed partial class SimEnemy : SimNpc
 {
     // The cast packets and the animation lock live in Casting; EnemyActionHandler decides when
     // they go out and what the action does.
@@ -100,6 +103,9 @@ public sealed class SimEnemy : SimNpc
 
     // The server's own ceiling: bosses turn at most ~145° per ~0.3s movement tick.
     private const float BossTurnSpeed = MathF.PI * 8f / 3f;
+
+    // How long the model takes to turn from its facing to `point`.
+    public float SecondsToFace(Vector3 point) => MathF.Abs(MathUtil.NormalizeRotation(this.Placement().Face(point).Rotation - Rotation)) / BossTurnSpeed;
 
     private readonly SimulatedMotion motion;
 
@@ -203,7 +209,7 @@ public sealed class SimEnemy : SimNpc
             ActorControl.SetInCombat(true);
         }
         DiagnosticLog.Info($"[SimEnemy.SpawnFromPacket] {DisplayName} (goid 0x{GameObjectId.ObjectId:X}) created by the engine after {PacketSpawnFrames} frames: {DescribeDrawState()} "
-            + $"Targetable=0x{targetableBefore:X}->0x{chara.TargetableStatus:X} name=\"{chara.Name}\" pos {chara.Position}.");
+            + $"Targetable=0x{targetableBefore:X}->0x{chara.TargetableStatus:X} name=\"{chara.Name}\" pos {chara.Position} hitbox={chara.HitboxRadius:F2}.");
     }
 
     /// <summary>
@@ -255,6 +261,39 @@ public sealed class SimEnemy : SimNpc
                 Follow(target);
             }
         }
+    }
+
+    // Follow, stopping `reach` past touching hitboxes: the distance an enemy closes to.
+    public void Follow(SimCharacter? target, float speed, float reach)
+    {
+        if (MovementLocked && target.IsAlive()) return;
+        motion.Follow(target, speed, reach);
+    }
+
+    // Make for the target's centre and stay on it. A live actor's hitbox can change mid-chase, so
+    // homing can't be a follow reach worked out from the hitboxes as it starts.
+    public void HomeIn(SimCharacter? target, float speed)
+    {
+        if (MovementLocked && target.IsAlive()) return;
+        motion.HomeIn(target, speed);
+    }
+
+    // A Provoke landed on this enemy. Nothing changes unless a scenario models the enmity it moves.
+    public event Action<SimCharacter>? Provoked;
+
+    public void Provoke(SimCharacter by) => Provoked?.Invoke(by);
+
+    // A party member's attack landed on this enemy, for a scenario that hands it to its first attacker.
+    public event Action<SimCharacter>? Attacked;
+
+    public void NoteAttack(SimCharacter by) => Attacked?.Invoke(by);
+
+    // Shown HP; the sim deals no damage, so this is only ever set.
+    public float HpFraction => Proxy is { Exists: true, MaxHealth: > 0 } chara ? (float)chara.Health / chara.MaxHealth : 1f;
+
+    public void SetHpFraction(float fraction)
+    {
+        if (Proxy is { Exists: true } chara) SendHealth((uint)(chara.MaxHealth * Math.Clamp(fraction, 0f, 1f)));
     }
 
     // AnimLock (8) is the mode the client holds an actor in while an action animation plays.
@@ -386,9 +425,12 @@ public sealed class SimEnemy : SimNpc
 
     private const float FadeOutDuration = 1.3f;
 
+    public bool FadingOut { get; private set; }
+
     // A spent add or a boss leaving at a phase transition: gone without dying.
     public void FadeOut()
     {
+        FadingOut = true;
         ActorControl.FadeOut();
         events.Add(FadeOutDuration, Despawn);
     }
@@ -396,6 +438,7 @@ public sealed class SimEnemy : SimNpc
     public override void Tick(float deltaSeconds)
     {
         base.Tick(deltaSeconds);
+        TickForkVisibility();
         TickTimelineWatch(deltaSeconds);
         TickPacketSpawnCheckpoints();
 

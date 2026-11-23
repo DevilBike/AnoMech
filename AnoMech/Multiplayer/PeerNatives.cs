@@ -149,6 +149,11 @@ internal sealed class PeerNatives
         public Vector3 Position => inner.Position;
         public float Rotation => inner.Rotation;
         public void ActorControl(uint category, uint arg1 = 0, uint arg2 = 0, uint arg3 = 0, uint arg4 = 0, uint arg5 = 0, uint arg6 = 0, uint arg7 = 0, uint arg8 = 0) { }
+        public void SetState(ushort state) { }
+        public ushort SharedTimelineState => inner.SharedTimelineState;
+        public void UpdateSharedTimelineState(ushort from, ushort to) { }
+        public void ForceSharedGroupActive() { }
+        public void DeactivateSharedGroup() { }
         public void Despawn() { }
     }
 
@@ -184,6 +189,9 @@ internal sealed class PeerNatives
         {
             if (!natives.HostOwnsArena) natives.RealDirector.Commence();
         }
+
+        public bool BattleTalk(uint speakerNameId, uint textId, uint durationMs)
+            => natives.HostOwnsArena || natives.RealDirector.BattleTalk(speakerNameId, textId, durationMs);
     }
 
     private sealed class PeerHaterList(PeerNatives natives) : IHaterList
@@ -259,8 +267,10 @@ internal sealed class PeerProxy(IBattleCharaProxy inner, PeerSeat seat) : IBattl
     public float Rotation => inner.Rotation;
     public float HitboxRadius => inner.HitboxRadius;
     public bool HasDrawObject => inner.HasDrawObject;
-    public bool IsDrawObjectVisible => inner.IsDrawObjectVisible;
+    public bool IsDrawObjectVisible { get => inner.IsDrawObjectVisible; set => inner.IsDrawObjectVisible = value; }
     public byte ModelState => inner.ModelState;
+    public NpcAppearance? Appearance => inner.Appearance;
+    public float ModelScale { get => inner.ModelScale; set => inner.ModelScale = value; }
     public bool IsCasting => inner.IsCasting;
     public uint CastActionId => inner.CastActionId;
     public float CurrentCastTime => inner.CurrentCastTime;
@@ -271,6 +281,7 @@ internal sealed class PeerProxy(IBattleCharaProxy inner, PeerSeat seat) : IBattl
     public uint MaxMana => inner.MaxMana;
     public byte TargetableStatus => inner.TargetableStatus;
     public ushort GetTetherId(byte slot) => inner.GetTetherId(slot);
+    public bool ShowsStatus(ushort statusId) => inner.ShowsStatus(statusId);
     public string DescribeDrawState() => inner.DescribeDrawState();
     public string DescribeActionTimeline() => inner.DescribeActionTimeline();
     public string DescribeTimelineSlotIds() => inner.DescribeTimelineSlotIds();

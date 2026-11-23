@@ -11,6 +11,7 @@ using AnoMech.Core.Game.Party;
 using AnoMech.Core.Map;
 using AnoMech.Scenarios;
 using AnoMech.Core.Native.Interfaces;
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
 
 namespace AnoMech.Core.SimObjects;
 
@@ -18,7 +19,7 @@ namespace AnoMech.Core.SimObjects;
 // the children (enemies, tethers, waymarks, ...) one run, gone in Despawn. Spawn entry points
 // (ApplyParty, SpawnEnemy, Tether, PlaceWaymarks, EnforceArenaBoundary) construct the SimObject
 // and register it for teardown. Zone loading and map effects go through world.Map.
-public sealed class SimWorld : ISimObject, IDisposable
+public sealed partial class SimWorld : ISimObject, IDisposable
 {
     // Ownership
     private readonly SimChildren children = new();
@@ -150,10 +151,12 @@ public sealed class SimWorld : ISimObject, IDisposable
     public void PlaceWaymarks(IReadOnlyList<Waymark> layout)
         => children.GetOrAdd(() => new SimWaymarks(Coordinates)).Place(layout);
 
-    // Per-frame arena fence at `radius` from ScenarioOrigin. Kills any active
-    // party member (player included) who leaves the ring.
+    // Per-frame arena fence. Kills any active party member (player included) who leaves `shape`.
+    public void EnforceArenaBoundary(IArenaShape shape, string cause = "Walked out of arena")
+        => children.SetSingleton(new SimArenaBoundary(Party, shape, cause));
+
     public void EnforceArenaBoundary(float radius, string cause = "Walked out of arena")
-        => children.SetSingleton(new SimArenaBoundary(Party, radius, cause));
+        => EnforceArenaBoundary(new CircleArena(radius), cause);
 
     // Where the server stops an NPC a knockback pushes: a circle this far from ScenarioOrigin. Set by
     // the zone for the run; without it a push goes its full distance.
@@ -179,6 +182,12 @@ public sealed class SimWorld : ISimObject, IDisposable
     public void PlayBgm(ushort bgmId, float secondsIn = 0f)
         => children.SetSingleton(new SimBgm()).Play(bgmId, secondsIn);
 
+    // The fight's own change of track (IBgm.Switch); nothing while music is suppressed. Each client
+    // plays its own music, so these belong in RunInstanceEvents.
+    public void SwitchBgm(ushort bgmId) => children.Singleton<SimBgm>()?.Switch(bgmId);
+
+    public void SilenceBgm() => children.Singleton<SimBgm>()?.Silence();
+
     // True when `local` (scenario-local) is outside the active arena fence; false
     // when the current scenario enforces no boundary.
     public bool IsOutsideArena(Vector3 local)
@@ -186,12 +195,15 @@ public sealed class SimWorld : ISimObject, IDisposable
 
     // A scenario message the whole party should see (which arrow was missed, why everyone just
     // died). Printed here and mirrored to peers, which have no other channel for mid-run text.
-    public event Action<string>? Announced;
+    public event Action<string, string?>? Announced;
 
-    public void Announce(string text)
+    // With a speaker, the line reads as that NPC's dialogue (a boss quote) instead of a system message.
+    public void Announce(string text, string? speaker = null)
     {
-        Plugin.ChatGui.Print(new XivChatEntry { Type = XivChatType.SystemMessage, Message = $"[AnoMech] {text}" });
-        Announced?.Invoke(text);
+        Plugin.ChatGui.Print(speaker is null
+            ? new XivChatEntry { Type = XivChatType.SystemMessage, Message = $"[AnoMech] {text}" }
+            : new XivChatEntry { Type = XivChatType.NPCDialogueAnnouncements, Name = speaker, Message = text });
+        Announced?.Invoke(text, speaker);
     }
 
     // The run failed without anyone dying, e.g. a puzzle retail only punishes minutes later. Play
@@ -202,6 +214,15 @@ public sealed class SimWorld : ISimObject, IDisposable
     public void Fail(string reason, bool freeze = false) => Failed?.Invoke(reason, freeze);
 
     internal SimEvents SimEvents { get; } = new();
+
+    // A player's own action as it resolves, for the running scenario (IWorldEventListener.OnPlayerActed).
+    internal void PlayerActed(SimCharacter actor, uint actionId, GameObjectId? target)
+    {
+        var aimedAt = target is { } id
+            ? Party.AllMembers().Concat(children.OfType<SimEnemy>()).FirstOrDefault(c => c.IsActive && c.GameObjectId.ObjectId == id.ObjectId)
+            : null;
+        SimEvents.Raise(new PlayerActed(actor, actionId, aimedAt));
+    }
 
     // A one-shot VFX sheet row at a scenario-local point, e.g. FRU's Return marker (1013) under each
     // player. Shown on this client only.

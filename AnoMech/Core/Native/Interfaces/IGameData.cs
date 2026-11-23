@@ -8,6 +8,7 @@ public interface IGameData
     ClassJobRow? ClassJob(uint classJobId);
     BNpcBaseRow? BNpcBase(uint bnpcBaseId);
     ModelCharaRow? ModelChara(uint modelCharaId);
+    NpcEquipRow? NpcEquip(uint npcEquipId);
     ModelSkeletonRow? ModelSkeleton(uint skeletonId);
     StatusRow? Status(ushort statusId);
     TerritoryTypeRow? TerritoryType(uint territoryId);
@@ -17,6 +18,9 @@ public interface IGameData
     string? BNpcName(uint nameId);
 
     bool WeatherExists(byte weatherId);
+
+    // Esuna can remove it.
+    bool CanDispel(ushort statusId);
 
     bool FileExists(string path);
 }

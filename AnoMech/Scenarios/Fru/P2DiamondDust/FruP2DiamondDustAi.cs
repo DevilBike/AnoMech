@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using AnoMech.Core.Game;
 using AnoMech.Core.Game.Ai;
 using AnoMech.Core.Game.Party;
 using AnoMech.Core.SimObjects;
@@ -33,6 +34,7 @@ public sealed class FruP2DiamondDustAi : IScenarioAi<FruP2DiamondDustState>
         world = worldParam;
         puddles.Clear();
         var ai = new AiManager(world);
+        world.Events.Add(0f, StartOnClockMarkers);
         ai.Move(15.3f, () => ByRole(KickSpot), arrivalTime: 20.6f);
         ai.Move(20.7f, () => ByRole(StoneSpot), arrivalTime: 23.3f);
         ai.Move(23.35f, () => ByRole(KnockbackSpot), jitter: 0f, arrivalTime: 27.4f);
@@ -51,6 +53,13 @@ public sealed class FruP2DiamondDustAi : IScenarioAi<FruP2DiamondDustState>
         world.Events.Add(47.4f, () => SlideBots(behind: !state.Stillness));
         world.Events.Add(IceEnd, puddles.Clear);
         ai.Move(IceEnd + 0.3f, () => ByRole(_ => new Vector3(0, 0, 4)));
+    }
+
+    private void StartOnClockMarkers()
+    {
+        foreach (var role in Enum.GetValues<PartyRole>())
+            if (world.Party.Get(role) is { } member && member.IsAlive() && world.Party.IsBotDriven(member))
+                member.SetPosition(new Placement(Point(Clocks[(int)role], 10), 0f).Face(Vector3.Zero));
     }
 
     private bool Cursed => (state.MirrorOctant - state.FirstIcicle + 8) % 4 == 0;

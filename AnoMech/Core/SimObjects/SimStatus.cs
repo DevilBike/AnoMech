@@ -17,6 +17,7 @@ public sealed class SimStatus : ISimObject
     internal GameObjectId? ShownSource { get; set; }
     public bool IsActive { get; private set; }
     public ushort Stacks { get; private set; }
+    public float Remaining => duration > 0f ? MathF.Max(0f, duration - elapsed) : float.PositiveInfinity;
 
     // The StatusManager slot the client shows it in; -1 for a status the client never sees.
     internal int Slot { get; }
@@ -47,6 +48,16 @@ public sealed class SimStatus : ISimObject
         return this;
     }
 
+    // While it lasts, every other status on its holder keeps its remaining time; its own runs on
+    // (TEA's Temporal Displacement).
+    internal bool HoldsOtherTimers { get; private set; }
+
+    public SimStatus HoldingOtherTimers()
+    {
+        HoldsOtherTimers = true;
+        return this;
+    }
+
     internal void Reveal()
     {
         if (!Hidden) return;
@@ -67,7 +78,7 @@ public sealed class SimStatus : ISimObject
 
     public void Tick(float deltaSeconds)
     {
-        if (!IsActive || duration <= 0f) return;
+        if (!IsActive || duration <= 0f || (target.StatusTimersHeld && !HoldsOtherTimers)) return;
         elapsed += deltaSeconds;
         if (elapsed >= duration) End(StatusLossReason.Expired);
     }

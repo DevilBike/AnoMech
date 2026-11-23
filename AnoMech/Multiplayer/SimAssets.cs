@@ -11,12 +11,12 @@ using AnoMech.Core.UserActions;
 
 namespace AnoMech.Multiplayer;
 
-internal enum SimAssetKind { Action, BNpcBase, EObj, Tether, Layout, EventId, ModelChara }
+internal enum SimAssetKind { Action, BNpcBase, EObj, Tether, Layout, EventId, ModelChara, BattleTalk }
 
-// A peer rebuilds the world from raw engine ids the host sends and runs no scenario logic, so
-// it cannot judge whether an id belongs to the fight. Handing the engine an id loads that
-// content's files, and bad asset loads crash on the file thread (see CLAUDE.md), so an
-// unconstrained id field would let a malicious host make someone else's client load anything.
+// An allowlist for the raw engine ids a peer receives from the host. It is disabled (AllowAll):
+// UNVERIFIED whether a missing BNpcBase/ModelChara/EObj/layout id crashes a client at all, and
+// ActorControls reach peers unchecked anyway. If an id kind does crash, validate it against game
+// data (sheet row, FileExists, the zone's layout) rather than this harvest.
 //
 // The allowlist is harvested by reflection: every constant in a class named for an id kind
 // (UmadConstants.ActionId, ...) plus any static field whose own name names one, every EnemyAction's
@@ -39,6 +39,7 @@ internal static class SimAssets
         [SimAssetKind.Layout] = ["LayoutId"],
         [SimAssetKind.EventId] = ["EventId"],
         [SimAssetKind.ModelChara] = ["ModelCharaId"],
+        [SimAssetKind.BattleTalk] = ["BattleTalkId"],
     };
 
     private static Dictionary<SimAssetKind, HashSet<ulong>>? numbers;
@@ -116,8 +117,11 @@ internal static class SimAssets
         }
     }
 
+    private static readonly bool AllowAll = true;
+
     public static bool IsKnown(SimAssetKind kind, ulong id)
     {
+        if (AllowAll) return true;
         EnsureHarvested();
         return numbers![kind].Contains(id);
     }

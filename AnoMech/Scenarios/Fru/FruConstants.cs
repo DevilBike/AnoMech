@@ -21,6 +21,18 @@ public static class FruConstants
         new(WaymarkSlot.Four,  new Vector3( -7.07f, 0f,  7.07f)),
     ];
 
+    public static IReadOnlyList<Waymark> JpWaymarks =>
+    [
+        new(WaymarkSlot.A, new Vector3(0, 0, -10)),
+        new(WaymarkSlot.B, new Vector3(10, 0, 0)),
+        new(WaymarkSlot.C, new Vector3(0, 0, 10)),
+        new(WaymarkSlot.D, new Vector3(-10, 0, 0)),
+        new(WaymarkSlot.One, new Vector3(7.07f, 0, -7.07f)),
+        new(WaymarkSlot.Two, new Vector3(7.07f, 0, 7.07f)),
+        new(WaymarkSlot.Three, new Vector3(-7.07f, 0, 7.07f)),
+        new(WaymarkSlot.Four, new Vector3(-7.07f, 0, -7.07f)),
+    ];
+
     public static class Geometry
     {
         public const float ArenaRadius = 20f;
@@ -28,6 +40,8 @@ public static class FruConstants
 
     public static class WeatherId
     {
+        // TerritoryType 1238's WeatherRate only rolls weather 2, the duty's entry (P1) weather.
+        public const byte Fatebreaker = 2;
         public const byte Usurper = 35;
         public const byte Oracle = 105;
         // Ultimate Relativity and Crystallize Time, while time is stopped.
@@ -38,6 +52,7 @@ public static class FruConstants
 
     public static class BgmId
     {
+        public const ushort Fatebreaker = 20134;
         public const ushort Usurper = 20135;
         public const ushort Oracle = 20105;
         public const ushort OracleAndUsurper = 20137;
@@ -55,6 +70,13 @@ public static class FruConstants
         public const uint OracleFloorApocalypse = 0x00200010;
         public const uint OracleFloorAfterApocalypse = 0x00080001;
         public const byte PandoraArena = 47;
+
+        // Mirror, Mirror: a mirror's slot is its octant clockwise from north, plus one.
+        public const byte FirstReflectingMirror = 1;
+        public const uint BlueMirrorShow = 0x00020001;
+        public const uint RedMirrorShow = 0x02000100;
+        public const uint RedMirrorArm = 0x08000001;
+        public const uint ReflectingMirrorHide = 0x00080004;
 
         public const uint FreezeFloor = 0x00200010;
         public const uint ThawFloor = 0x00400001;
@@ -100,6 +122,9 @@ public static class FruConstants
 
     public static class BNpcBaseId
     {
+        public const uint Helper = 9020;
+        public const uint Fatebreaker = 17819;
+        public const uint FatebreakerImage = 17820;
         public const uint UsurperP2 = 17823;
         public const uint FrozenMirror = 17824;
         public const uint HolyLight = 17826;
@@ -114,6 +139,8 @@ public static class FruConstants
         public const uint FragmentOfFate = 17841;
         public const uint VisionOfRyne = 17844;
         public const uint VisionOfGaia = 17845;
+        // Mirror, Mirror's mirrors, unlike Diamond Dust's FrozenMirror.
+        public const uint ReflectingMirror = 17825;
     }
 
     // Retail's spawn-packet parts for FRU's human and demihuman models.
@@ -130,6 +157,9 @@ public static class FruConstants
 
     public static class BNpcNameId
     {
+        public const uint Fatebreaker = 9707;
+        public const uint FatebreakerImage = 9708;
+        public const uint ReflectingMirror = 9317;
         public const uint Oracle = 9832;
         public const uint SorrowsHourglass = 9823;
         public const uint DelightsHourglass = 9825;
@@ -191,6 +221,32 @@ public static class FruConstants
         // Unnamed; the Oracle uses it before walking back to the centre.
         public const uint OracleReposition = 40117;
         public const uint DrachenArmor = 40186;
+
+        // -- P1 Fall of Faith --
+        public const uint FallOfFaithFire = 40137;
+        public const uint FallOfFaithLightning = 40140;
+        public const uint FallOfFaithChargeFire = 40138;
+        public const uint FallOfFaithChargeLightning = 40141;
+        public const uint Sinblaze = 40156;
+        public const uint Sinsmite = 40142;
+        public const uint BowShock = 40143;
+
+        // -- P1 Towers --
+        public const uint PowderMarkTrail = 40168;
+        public const uint BurnMark = 40169;
+        public const uint BurntStrikeFire = 40129;
+        public const uint Blastburn = 40130;
+        public const uint BurntStrikeLightning = 40133;
+        public const uint Burnout = 40134;
+        public const uint UnmitigatedExplosion = 40136;
+        // Indexed by how many soakers the tower takes, 1 to 4.
+        public static readonly uint[] FireTowerExplosion = [0, 40131, 40122, 40123, 40124];
+        public static readonly uint[] LightningTowerExplosion = [0, 40135, 40125, 40126, 40127];
+
+        // -- P2 Mirror, Mirror --
+        public const uint MirrorMirror = 40179;
+        public const uint ReflectedScytheKickInstant = 40204;
+        public const uint ReflectedScytheKick = 40205;
 
         // -- P2 Diamond Dust --
         public const uint MirrorImage = 40180;
@@ -323,6 +379,8 @@ public static class FruConstants
     public static class StatusId
     {
         public const ushort ThinIce = 911;
+        public const ushort FloatingFetters = 2304;
+        public const ushort PowderMarkTrail = 4166;
         public const ushort Levitation = 1390;
         public const ushort Incurable = 2398;
         public const ushort Lightsteeped = 2257;
@@ -371,6 +429,8 @@ public static class FruConstants
 
     public static class TetherId
     {
+        public const ushort FallOfFaithFire = 249;
+        public const ushort FallOfFaithLightning = 287;
         public const ushort ChainsOfEverlastingLight = 110;
         public const ushort CurseOfEverlastingLight = 111;
         public const ushort Slow = 133;
