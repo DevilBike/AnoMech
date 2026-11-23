@@ -13,7 +13,7 @@ namespace AnoMech.Scenarios.Fru.P2LightRampant;
 public sealed class FruP2LightRampantJpAi : IScenarioAi<FruP2LightRampantState>, IFruP2LightRampantChainRing
 {
     public string Name => "JP · Mana";
-    public string Group => "JP";
+    public string Group => "JP Mana";
 
     public IReadOnlyList<PartyRole> ClockwiseRing { get; } =
     [

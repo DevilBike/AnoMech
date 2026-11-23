@@ -12,7 +12,7 @@ namespace AnoMech.Scenarios.Fru.P3Apocalypse;
 public sealed class FruP3ApocalypseJpAi : IScenarioAi<FruP3ApocalypseState>
 {
     public string Name => "JP · Mana";
-    public string Group => "JP";
+    public string Group => "JP Mana";
 
     private static readonly PartyRole[] ZOrder =
     [

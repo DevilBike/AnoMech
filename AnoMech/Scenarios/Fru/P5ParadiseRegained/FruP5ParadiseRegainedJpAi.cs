@@ -11,7 +11,7 @@ namespace AnoMech.Scenarios.Fru.P5ParadiseRegained;
 public sealed class FruP5ParadiseRegainedJpAi : IScenarioAi<FruP5ParadiseRegainedState>
 {
     public string Name => "JP · Mana";
-    public string Group => "JP";
+    public string Group => "JP Mana";
 
     private const float MainTankNorth = 5.8f;
 

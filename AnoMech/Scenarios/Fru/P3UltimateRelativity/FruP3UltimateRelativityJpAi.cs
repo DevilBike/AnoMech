@@ -13,7 +13,7 @@ namespace AnoMech.Scenarios.Fru.P3UltimateRelativity;
 public sealed class FruP3UltimateRelativityJpAi : IScenarioAi<FruP3UltimateRelativityState>
 {
     public string Name => "JP · Mana";
-    public string Group => "JP";
+    public string Group => "JP Mana";
 
     private const float S = 1f / 2.358f;
     private const float FirstPressEarliest = 1f;

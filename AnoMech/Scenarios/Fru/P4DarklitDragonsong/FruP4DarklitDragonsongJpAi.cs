@@ -12,7 +12,7 @@ namespace AnoMech.Scenarios.Fru.P4DarklitDragonsong;
 public sealed class FruP4DarklitDragonsongJpAi : IScenarioAi<FruP4DarklitDragonsongState>
 {
     public string Name => "JP · Mana";
-    public string Group => "JP";
+    public string Group => "JP Mana";
 
     private const float S = 1f / 2.358f;
     private const float IntercardMarkerRadius = 10f;

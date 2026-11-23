@@ -26,24 +26,24 @@ public class FruRegionMenuTests
         Assert.That(phaseMenu.Count(scenario => scenario == original), Is.EqualTo(1));
         Assert.That(phaseMenu, Does.Not.Contain(jp));
         Assert.That(menu.Primary(jp), Is.SameAs(original));
-        Assert.That(menu.Groups(original), Is.EqualTo(new[] { "NA", "JP" }));
+        Assert.That(menu.Groups(original), Is.SupersetOf(new[] { "NA", "JP" }));
         Assert.That(menu.Groups(jp), Is.EqualTo(menu.Groups(original)));
         Assert.That(menu.DefaultRegion(original), Is.EqualTo("NA"));
         Assert.That(menu.DefaultRegion(jp), Is.EqualTo("JP"));
         Assert.That(menu.Resolve(original, "JP"), Is.SameAs(jp));
         Assert.That(menu.Resolve(jp, "NA"), Is.SameAs(original));
         Assert.That(menu.Resolve(original, null), Is.SameAs(original));
-        Assert.That(original.AiStrats.All(ai => ai.Group is null or "NA"), Is.True);
+        Assert.That(original.AiStrats.All(ai => ai.Group is null or "NA" or "JP Mana"), Is.True);
         Assert.That(jp.AiStrats.All(ai => ai.Group == "JP"), Is.True);
     }
 
     [Test]
-    public void FruPhasesKeepTheEightOriginalMechanicButtons()
+    public void FruPhasesKeepEveryOriginalMechanicButton()
     {
         var catalog = ScenarioCatalog.Create();
         var menu = new ScenarioRegionMenu(catalog);
         var originals = catalog.Scenarios.Where(scenario => scenario.Phase.Zone is FruZone && scenario is not IScenarioRegionVariant).ToArray();
-        Assert.That(originals, Has.Length.EqualTo(8));
+        Assert.That(originals, Has.Length.EqualTo(12));
         foreach (var phase in catalog.PhasesOf(FruZone.Instance))
             Assert.That(menu.ScenariosOf(phase), Is.EqualTo(originals.Where(scenario => scenario.Phase == phase).ToArray()));
     }

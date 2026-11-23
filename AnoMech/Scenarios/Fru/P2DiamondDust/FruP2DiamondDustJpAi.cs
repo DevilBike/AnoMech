@@ -12,7 +12,7 @@ namespace AnoMech.Scenarios.Fru.P2DiamondDust;
 public sealed class FruP2DiamondDustJpAi : IScenarioAi<FruP2DiamondDustState>
 {
     public string Name => "JP · Mana";
-    public string Group => "JP";
+    public string Group => "JP Mana";
 
     private static readonly int[] SpreadClocks = [0, 4, 6, 2, 5, 3, 7, 1];
     private const float HolyRimRadius = 18f;

@@ -14,7 +14,7 @@ namespace AnoMech.Scenarios.Fru.P4CrystallizeTime;
 public sealed class FruP4CrystallizeTimeJpAi : IScenarioAi<FruP4CrystallizeTimeState>
 {
     public string Name => "JP · Mana";
-    public string Group => "JP";
+    public string Group => "JP Mana";
 
     private const float RunSpeed = 6f;
     private const float ReferenceScale = 10f / 23.74f;
