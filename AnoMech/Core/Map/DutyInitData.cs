@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace AnoMech.Core.Map;
 
@@ -11,4 +12,8 @@ public sealed record DutyInitData(
     HelperPool HelperPool,
     IReadOnlyList<ushort> MapEffectSnapshot,
     IReadOnlyList<byte[]> Rsv,
-    IReadOnlyList<byte[]> Rsf);
+    IReadOnlyList<byte[]> Rsf)
+{
+    // A zone with no captured replay: no entrance EObj, map effects or Rsv/Rsf data.
+    public static DutyInitData Unknown(Vector3 origin) => new(EntranceBarrier.Unknown(origin), [], [], []);
+}

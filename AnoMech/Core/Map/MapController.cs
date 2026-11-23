@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using AnoMech.Core.Native.Interfaces;
 
 namespace AnoMech.Core.Map;
@@ -20,6 +21,7 @@ public sealed class MapController
     // land in that window.
     private readonly List<PendingMapEffect> pendingEffects = new();
     private readonly List<PendingDirectorUpdate> pendingDirectorUpdates = new();
+    private readonly List<PendingBattleTalk> pendingBattleTalks = new();
 
     // IsInInstance goes true in Enter and false in Unload, so this also refuses to queue a
     // call that would otherwise fire on the next run.
@@ -54,9 +56,22 @@ public sealed class MapController
 
     private PendingSnapshot? pendingSnapshot;
 
+    private Vector3? pendingSpawnWallDrop;
+    private int spawnWallDropFramesLeft;
+    private const float SpawnWallRadius = 10f;
+
     private struct PendingDirectorUpdate
     {
         public uint Category, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6;
+        public int FramesLeft;
+    }
+
+    // A line is a timing cue: shown seconds late it would mistime the cast it announces.
+    internal const int BattleTalkMaxFrames = 120;
+
+    private struct PendingBattleTalk
+    {
+        public uint SpeakerNameId, TextId, DurationMs;
         public int FramesLeft;
     }
 
@@ -83,12 +98,34 @@ public sealed class MapController
         pendingEffects.Clear();
         pendingSnapshot = null;
         pendingDirectorUpdates.Clear();
+        pendingBattleTalks.Clear();
+        pendingSpawnWallDrop = null;
         layerDumpFrame = int.MaxValue;
     }
 
     // Per-frame poll. Called from SimWorld.Tick.
+    public void DropSpawnWall(Vector3 spawn)
+    {
+        pendingSpawnWallDrop = spawn;
+        spawnWallDropFramesLeft = RetryMaxFrames;
+    }
+
+    private void TickSpawnWallDrop()
+    {
+        if (pendingSpawnWallDrop is not { } spawn) return;
+        if (Natives.Layout.DisableSpawnAreaColliders(spawn, SpawnWallRadius) > 0)
+        {
+            pendingSpawnWallDrop = null;
+            return;
+        }
+        if (--spawnWallDropFramesLeft > 0) return;
+        DiagnosticLog.Warn($"[MapController] Gave up dropping the spawn wall after {RetryMaxFrames} frames -- no SharedGroup near ({spawn.X:F1},{spawn.Z:F1}).");
+        pendingSpawnWallDrop = null;
+    }
+
     internal void Tick()
     {
+        TickSpawnWallDrop();
         if (IsInInstance && layerDumpFrame <= LayerDumpFrames[^1])
         {
             layerDumpFrame++;
@@ -151,6 +188,28 @@ public sealed class MapController
             else
             {
                 pendingDirectorUpdates[i] = pending;
+            }
+        }
+
+        for (int i = 0; i < pendingBattleTalks.Count; i++)
+        {
+            var pending = pendingBattleTalks[i];
+            if (Natives.Director.BattleTalk(pending.SpeakerNameId, pending.TextId, pending.DurationMs))
+            {
+                pendingBattleTalks.RemoveAt(i);
+                i--;
+                continue;
+            }
+            pending.FramesLeft--;
+            if (pending.FramesLeft <= 0)
+            {
+                DiagnosticLog.Warn($"[MapEffect] Dropped BattleTalk text={pending.TextId} after {BattleTalkMaxFrames} frames -- no director yet.");
+                pendingBattleTalks.RemoveAt(i);
+                i--;
+            }
+            else
+            {
+                pendingBattleTalks[i] = pending;
             }
         }
     }
@@ -222,6 +281,18 @@ public sealed class MapController
         {
             DiagnosticLog.Warn($"[MapEffect] DirectorUpdate category=0x{category:X8} not ready yet -- queued for retry.");
             pendingDirectorUpdates.Add(new PendingDirectorUpdate { Category = category, Arg1 = arg1, Arg2 = arg2, Arg3 = arg3, Arg4 = arg4, Arg5 = arg5, Arg6 = arg6, FramesLeft = RetryMaxFrames });
+        }
+    }
+
+    // A boss line (IInstanceContentDirector.BattleTalk); retried like DirectorUpdate.
+    public void BattleTalk(uint speakerNameId, uint textId, uint durationMs)
+    {
+        if (!InSim(nameof(BattleTalk))) return;
+        if (!Natives.Director.BattleTalk(speakerNameId, textId, durationMs)
+            && TryReserveRetrySlot(pendingBattleTalks.Count, "BattleTalk"))
+        {
+            DiagnosticLog.Warn($"[MapEffect] BattleTalk text={textId} not ready yet -- queued for retry.");
+            pendingBattleTalks.Add(new PendingBattleTalk { SpeakerNameId = speakerNameId, TextId = textId, DurationMs = durationMs, FramesLeft = BattleTalkMaxFrames });
         }
     }
 }

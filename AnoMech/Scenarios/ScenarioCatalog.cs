@@ -1,5 +1,35 @@
 using System.Collections.Generic;
 using System.Linq;
+using AnoMech.Scenarios.Dsr.P1Knights;
+using AnoMech.Scenarios.Dsr.P2Thordan;
+using AnoMech.Scenarios.Dsr.P3Nidhogg;
+using AnoMech.Scenarios.Dsr.P4Eyes;
+using AnoMech.Scenarios.Dsr.P5Wrath;
+using AnoMech.Scenarios.Dsr.P5Death;
+using AnoMech.Scenarios.Dsr.P6DoubleDragons;
+using AnoMech.Scenarios.M10s.AlleyOopTwo;
+using AnoMech.Scenarios.M10s.ArenaSplit;
+using AnoMech.Scenarios.M10s.DeepAerial;
+using AnoMech.Scenarios.M10s.DeepVarial;
+using AnoMech.Scenarios.M10s.InsaneAir;
+using AnoMech.Scenarios.M10s.Opener;
+using AnoMech.Scenarios.M10s.SickestTakeoff;
+using AnoMech.Scenarios.M10s.Snaking;
+using AnoMech.Scenarios.M10s.XtremeSnaking;
+using AnoMech.Scenarios.M11s.ArenaSplit;
+using AnoMech.Scenarios.M11s.Ecliptic;
+using AnoMech.Scenarios.M11s.Meteorain;
+using AnoMech.Scenarios.M11s.Opener;
+using AnoMech.Scenarios.M11s.OrbitalOmen;
+using AnoMech.Scenarios.M11s.UltimateWeapons;
+using AnoMech.Scenarios.M9s.Aetherletting;
+using AnoMech.Scenarios.M9s.Coffinmaker;
+using AnoMech.Scenarios.M9s.Deathmatch;
+using AnoMech.Scenarios.M9s.Final;
+using AnoMech.Scenarios.M9s.Flails;
+using AnoMech.Scenarios.M9s.HellInACell;
+using AnoMech.Scenarios.M9s.VampStomp;
+using AnoMech.Scenarios.M9s.VampStomp2;
 using AnoMech.Scenarios.Fru.P2DiamondDust;
 using AnoMech.Scenarios.Fru.P2LightRampant;
 using AnoMech.Scenarios.Fru.P3Apocalypse;
@@ -12,6 +42,13 @@ using AnoMech.Scenarios.Top.P2PartySynergy;
 using AnoMech.Scenarios.Top.P5Delta;
 using AnoMech.Scenarios.Top.P5Omega;
 using AnoMech.Scenarios.Top.P5Sigma;
+using AnoMech.Scenarios.Tea.P1LivingLiquid;
+using AnoMech.Scenarios.Tea.I1LimitCut;
+using AnoMech.Scenarios.Tea.I1LimitCutExaflares;
+using AnoMech.Scenarios.Tea.I2TemporalStasis;
+using AnoMech.Scenarios.Tea.P2BjCc;
+using AnoMech.Scenarios.Tea.P3AlexanderPrime;
+using AnoMech.Scenarios.Tea.P4PerfectAlexander;
 using AnoMech.Scenarios.Top.P6WaveCannon2;
 using AnoMech.Scenarios.Ucob.P5Exaflares;
 using AnoMech.Scenarios.Umad;
@@ -24,6 +61,10 @@ using AnoMech.Scenarios.Umad.P5Celestriad;
 using AnoMech.Scenarios.Umad.P5Exaflares;
 using AnoMech.Scenarios.Umad.P5Flood;
 using AnoMech.Scenarios.Uwu.P3TitanGaols;
+using AnoMech.Scenarios.Uwu.P1Garuda;
+using AnoMech.Scenarios.Uwu.P2Ifrit;
+using AnoMech.Scenarios.Uwu.P3Titan;
+using AnoMech.Scenarios.Uwu.PrimalRoulette;
 using AnoMech.Scenarios.Uwu.UltimateAnnihilation;
 using AnoMech.Scenarios.Uwu.UltimatePredation;
 using AnoMech.Scenarios.Uwu.UltimateSuppression;
@@ -96,9 +137,53 @@ public sealed class ScenarioCatalog
         new TopP5OmegaScenario(),
         new TopP6WaveCannon2Scenario(),
         new UwuP3TitanGaolsScenario(),
+        new TeaP1LivingLiquidScenario(),
+        new TeaI1LimitCutScenario(),
+        new TeaI1LimitCutExaflaresScenario(),
+        new TeaI1LimitCutExaflaresExtraHardScenario(),
+        new TeaP2BjCcScenario(),
+        new TeaI2TemporalStasisScenario(),
+        new TeaP3AlexanderPrimeScenario(),
+        new TeaP4PerfectAlexanderScenario(),
+        new UwuP1GarudaScenario(),
+        new UwuP2IfritScenario(),
+        new UwuP3TitanScenario(),
         new UltimatePredationScenario(),
         new UltimateAnnihilationScenario(),
         new UltimateSuppressionScenario(),
+        new PrimalRouletteScenario(),
         new UcobP5ExaflaresScenario(),
+        new DsrP1KnightsScenario(),
+        new DsrP2ThordanScenario(),
+        new DsrP2MeteorsScenario(),
+        new DsrP3NidhoggScenario(),
+        new DsrP4EyesScenario(),
+        new DsrP5WrathScenario(),
+        new DsrP5DeathScenario(),
+        new DsrP6DoubleDragonsScenario(),
+        new DsrP6CauterizeScenario(),
+        new M9sVampStompScenario(),
+        new M9sCoffinmakerScenario(),
+        new M9sAetherlettingScenario(),
+        new M9sVampStomp2Scenario(),
+        new M9sFlailsScenario(),
+        new M9sHellInACellScenario(),
+        new M9sDeathmatchScenario(),
+        new M9sFinalScenario(),
+        new M10sOpenerScenario(),
+        new M10sSickestTakeoffScenario(),
+        new M10sInsaneAirScenario(),
+        new M10sSnakingScenario(),
+        new M10sDeepVarialScenario(),
+        new M10sDeepAerialScenario(),
+        new M10sArenaSplitScenario(),
+        new M10sXtremeSnakingScenario(),
+        new M10sAlleyOopTwoScenario(),
+        new M11sOpenerScenario(),
+        new M11sUltimateWeaponsScenario(),
+        new M11sOrbitalOmenScenario(),
+        new M11sMeteorainScenario(),
+        new M11sArenaSplitScenario(),
+        new M11sEclipticScenario(),
     ]);
 }

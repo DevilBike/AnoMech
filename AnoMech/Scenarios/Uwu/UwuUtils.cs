@@ -18,7 +18,7 @@ public enum LandslideType
     Ultima
 }
 
-public class UwuUtils(SimWorld world)
+public partial class UwuUtils(SimWorld world)
 {
     public const byte Level = 70;
 

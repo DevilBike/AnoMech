@@ -17,6 +17,14 @@ public sealed class EventScheduler
 
     public float Elapsed => elapsed;
 
+    // Runs only part of a scheduled timeline, as a drill of one mechanic: drops everything outside
+    // [from, to] unfired and starts the clock at `from`.
+    public void KeepWindow(float from, float to)
+    {
+        entries.RemoveAll(e => e.Time < from || e.Time > to);
+        elapsed = MathF.Max(elapsed, from);
+    }
+
     // Moves the clock without firing; whatever falls due fires on the next Tick.
     public void Advance(float seconds) => elapsed += MathF.Max(0f, seconds);
 
@@ -51,6 +59,10 @@ public sealed class EventScheduler
         if (index < 0) entries.Add(entry);
         else entries.Insert(index, entry);
     }
+
+    // Drops a step whose reason went away, so it can't hold the queue open: an empty queue is how a
+    // run is seen to have ended.
+    public void Remove(Action action) => entries.RemoveAll(e => ReferenceEquals(e.Action, action));
 
     public void Tick(float deltaSeconds)
     {
