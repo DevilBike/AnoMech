@@ -13,7 +13,6 @@ namespace AnoMech.Scenarios.Fru.P2MirrorMirror;
 public sealed class FruMirrorMirrorScenario : IScenario
 {
     public string Name => "Mirror, Mirror";
-    public bool SupportsMultiplayer => true;
     public float Duration => 37f;
     public IPhase Phase => FruZone.P2;
     public IReadOnlyList<IScenarioAi> AiStrats { get; } = [new MirrorMirrorAi()];

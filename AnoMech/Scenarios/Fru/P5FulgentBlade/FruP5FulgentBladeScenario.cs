@@ -19,7 +19,6 @@ public sealed class FruP5FulgentBladeScenario : IScenario
 {
     public string Name => "Fulgent Blade";
     public IPhase Phase => FruZone.P5;
-    public bool SupportsMultiplayer => true;
     public bool SupportsSolo => true;
 
     public IReadOnlyList<IScenarioAi> AiStrats => [new FruP5FulgentBladeAi(), new FruP5FulgentBladeJpAi()];

@@ -13,7 +13,6 @@ namespace AnoMech.Scenarios.Fru.P1Towers;
 public sealed class FruTowersScenario : IScenario
 {
     public string Name => "Towers";
-    public bool SupportsMultiplayer => true;
     public float Duration => Length;
     public IPhase Phase => FruZone.P1;
     public IReadOnlyList<IScenarioAi> AiStrats { get; } = [new TowersAi()];

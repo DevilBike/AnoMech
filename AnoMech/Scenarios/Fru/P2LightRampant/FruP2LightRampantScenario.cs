@@ -18,7 +18,6 @@ public sealed class FruP2LightRampantScenario : IScenario
 {
     public string Name => "Light Rampant";
     public IPhase Phase => FruZone.P2;
-    public bool SupportsMultiplayer => true;
 
     public IReadOnlyList<IScenarioAi> AiStrats => [new FruP2LightRampantAi(), new FruP2LightRampantJpAi()];
 
@@ -29,7 +28,7 @@ public sealed class FruP2LightRampantScenario : IScenario
     private readonly FruP2LightRampantSettingsWindow settingsWindow = new();
 
     private const float PuddleShowsAfterHammer = 0.95f;
-    private const float PuddleArmsAfterShowing = 2.2f;
+    private const float PuddleArmsAfterShowing = 1.5f;
     private const float PuddleFadesAfterShowing = 9.7f;
     private const float PuddleLastsAfterShowing = 12.85f;
     // Curse chains stretched shorter than this snap. UNVERIFIED: retail's limit lies between 23 and 25.7.

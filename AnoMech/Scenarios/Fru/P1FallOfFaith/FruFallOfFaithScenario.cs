@@ -14,7 +14,6 @@ namespace AnoMech.Scenarios.Fru.P1FallOfFaith;
 public sealed class FruFallOfFaithScenario : IScenario
 {
     public string Name => "Fall of Faith";
-    public bool SupportsMultiplayer => true;
     public float Duration => Start + Length;
     public IPhase Phase => FruZone.P1;
     public IReadOnlyList<IScenarioAi> AiStrats { get; } =
