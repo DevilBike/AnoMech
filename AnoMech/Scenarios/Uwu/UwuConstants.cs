@@ -35,6 +35,7 @@ public class UwuConstants
 
     public class BNpcBaseId
     {
+        public const uint Dummy = 9020;
         public const uint Garuda = 8722;
         public const uint SuparnaChirada = 8723;
         public const uint RazorPlume = 8724;
@@ -66,6 +67,7 @@ public class UwuConstants
 
     public class BNpcNameId
     {
+        public const uint Dummy = 108;
         public const uint BombBoulder = 1803;
         public const uint Ifrit = 1185;
         public const uint InfernalNail = 1186;

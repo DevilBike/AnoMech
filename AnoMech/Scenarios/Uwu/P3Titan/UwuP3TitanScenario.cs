@@ -166,7 +166,7 @@ public sealed class UwuP3TitanScenario : IScenario
         world.Events.Add(51.26f, () => CastBursts(bombs, 5, 1, 54.74f));
         world.Events.Add(52.30f, () => SpawnGaols(state.GaolTargets, [55.09f, 55.79f, 56.49f]));
         world.Events.Add(52.95f, () => CastLandslide(55.14f, aimAt: null));
-        world.Events.Add(53.40f, () => CastGraniteImpact(ActionId.GraniteImpactGaols, 17.7f));
+        world.Events.Add(53.40f, () => CastGraniteImpact(ActionId.GraniteImpactLong, 17.7f));
         world.Events.Add(54.74f, BurstSixthBombIntoGaols);
         world.Events.Add(55.14f, ResolveLandslide);
         world.Events.Add(57.28f, Tumult);
@@ -177,7 +177,7 @@ public sealed class UwuP3TitanScenario : IScenario
         world.Events.Add(62.86f, Tumult);
         world.Events.Add(63.97f, Tumult);
         world.Events.Add(65.08f, Tumult);
-        world.Events.Add(71.10f, () => GraniteImpact(ActionId.GraniteImpactGaols));
+        world.Events.Add(71.10f, () => GraniteImpact(ActionId.GraniteImpactLong));
         world.Events.Add(71.43f, () => utils.Awaken(titan, false));
 
         world.Events.Add(70.21f, () => CastWeights(2, 73.20f));
@@ -204,9 +204,9 @@ public sealed class UwuP3TitanScenario : IScenario
         world.Events.Add(92.45f, () => MarkGaolTargets([state.JailedHealer]));
         world.Events.Add(97.39f, () => Jail([state.JailedHealer]));
         world.Events.Add(98.45f, SpawnHealerGaol);
-        world.Events.Add(99.53f, () => CastGraniteImpact(ActionId.GraniteImpact, 6.7f));
+        world.Events.Add(99.53f, () => CastGraniteImpact(ActionId.GraniteImpactShort, 6.7f));
         world.Events.Add(104.84f, () => CastLandslide(107.02f, state.JailedHealer, 109.02f));
-        world.Events.Add(106.23f, () => GraniteImpact(ActionId.GraniteImpact));
+        world.Events.Add(106.23f, () => GraniteImpact(ActionId.GraniteImpactShort));
         world.Events.Add(107.02f, ResolveLandslide);
         world.Events.Add(107.06f, CastAwakenedSecondHit);
         world.Events.Add(109.02f, ResolveAwakenedSecondHit);

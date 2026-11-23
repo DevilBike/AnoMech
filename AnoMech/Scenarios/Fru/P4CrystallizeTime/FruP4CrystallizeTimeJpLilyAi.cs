@@ -256,6 +256,6 @@ public sealed class FruP4CrystallizeTimeJpLilyAi : IScenarioAi<FruP4CrystallizeT
 
     private void UseKnockbackImmunity()
     {
-        foreach (var bot in Bots()) bot.AddStatus(KnockbackImmunity.ArmsLength, 6f);
+        foreach (var bot in Bots()) bot.AddStatus(AnoMech.Core.UserActions.KnockbackImmunity.ArmsLength, 6f);
     }
 }

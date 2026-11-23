@@ -15,5 +15,5 @@ public sealed record DutyInitData(
     IReadOnlyList<byte[]> Rsf)
 {
     // A zone with no captured replay: no entrance EObj, map effects or Rsv/Rsf data.
-    public static DutyInitData Unknown(Vector3 origin) => new(EntranceBarrier.Unknown(origin), [], [], []);
+    public static DutyInitData Unknown(Vector3 origin) => new(EntranceBarrier.Unknown(origin), default, [], [], []);
 }

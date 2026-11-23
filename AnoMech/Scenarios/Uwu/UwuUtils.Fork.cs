@@ -15,27 +15,11 @@ namespace AnoMech.Scenarios.Uwu;
 // casts through these; upstream moved its own UWU scenarios to EnemyActions.
 public partial class UwuUtils
 {
-    public const byte Level = 70;
-
-    // Server-spawned floor EObj; the sky itself comes from the phase weather.
-    public SimEventObject? SpawnArenaFloor() => world.SpawnEventObject(new EventObjectSpawnConfig
-    {
-        EObjId = 2007457,
-        Placement = new(new(0.16f, 0, 1.4434f), 0),
-        ObjectIndex = 1,
-        TargetableStatus = 5,
-        EntityId = 0x4000829C,
-        LayoutId = 7538913,
-        GimmickId = 7538258,
-        TimelineState = 1,
-    });
-
     // Titan's arena EObj (LVD_Battle_Titan): its yellow ring shows up and shrinks on the jumps.
     public SimEventObject? SpawnTitanArena() => world.SpawnEventObject(new EventObjectSpawnConfig
     {
         EObjId = 2007457,
         Placement = new(Vector3.Zero, 0),
-        ObjectIndex = 2,
         TargetableStatus = 5,
         EntityId = 0x4000829D,
         LayoutId = 7372736,
@@ -44,13 +28,6 @@ public partial class UwuUtils
         RestoreStateOnDespawn = true,
         ForceSharedGroupActive = true,
     });
-
-    // Native head marker; its AVFX ends on its own, so it isn't tracked as a SimVfx.
-    public static void Lockon(SimCharacter? target, uint lockonId)
-    {
-        if (target == null) return;
-        target.ActorControl.HeadMarker(lockonId);
-    }
 
     public static void CastSelf(SimEnemy? caster, uint actionId, float castSeconds) =>
         caster?.NativeCast(actionId, ActionType.Action, 0f, castSeconds, false, targetId: caster.GameObjectId);

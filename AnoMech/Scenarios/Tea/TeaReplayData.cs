@@ -14,6 +14,7 @@ public static class TeaReplayData
 {
     public static readonly DutyInitData DutyInitData = new(
         new EntranceBarrier(2000182, 0x7C1907, 0x7C190B, new Vector3(100f, 0f, 115f), 0f),
+        default,
         [0, 1, 4, 1, 4, 4, 4, 4],
         [],
         []);

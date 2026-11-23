@@ -12,6 +12,10 @@ public sealed class UwuZone : IZone
     public static readonly UwuZone Instance = new();
     // Titan uses his trial arena's weather; Ultimania is Ultima's.
     private const byte EruptionsWeather = 29;
+    private const byte GalesWeather = 28;
+    private const byte HeatWavesWeather = 26;
+    public static readonly Phase Garuda = new(Instance, "P1", GalesWeather, 547);
+    public static readonly Phase Ifrit = new(Instance, "P2", HeatWavesWeather, 547);
     public static readonly Phase Titan = new(Instance, "P3", EruptionsWeather, 546, init: SpawnTitanArenas);
     public static readonly Phase Ultima = new(Instance, "", 95, 547, init: SpawnUltimaArenas);
 
