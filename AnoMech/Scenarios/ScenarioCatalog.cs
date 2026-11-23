@@ -149,7 +149,6 @@ public sealed class ScenarioCatalog
         new TeaP1LivingLiquidScenario(),
         new TeaI1LimitCutScenario(),
         new TeaI1LimitCutExaflaresScenario(),
-        new TeaI1LimitCutExaflaresExtraHardScenario(),
         new TeaP2BjCcScenario(),
         new TeaI2TemporalStasisScenario(),
         new TeaP3AlexanderPrimeScenario(),

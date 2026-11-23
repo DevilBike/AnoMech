@@ -24,6 +24,7 @@ public class TeaPeerVisibleTests
     private static IEnumerable<TestCaseData> Strats()
         => from scenario in ScenarioCatalog.Create().Scenarios
            where scenario.GetType().Namespace!.StartsWith("AnoMech.Scenarios.Tea.", StringComparison.Ordinal)
+                 && scenario.SupportsMultiplayer
            from strat in Enumerable.Range(0, scenario.AiStrats.Count)
            from link in Links
            select new TestCaseData(scenario.GetType(), strat, link).SetArgDisplayNames(scenario.GetType().Name, strat.ToString(CultureInfo.InvariantCulture), link.Name);
