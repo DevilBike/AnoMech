@@ -17,6 +17,7 @@ public sealed class FruP5ParadiseRegainedScenario : IScenario
 {
     public string Name => "Paradise Regained";
     public IPhase Phase => FruZone.P5;
+    public bool SupportsMultiplayer => true;
 
     public IReadOnlyList<IScenarioAi> AiStrats => [new FruP5ParadiseRegainedAi(), new FruP5ParadiseRegainedJpAi()];
 

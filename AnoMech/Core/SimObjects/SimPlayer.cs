@@ -58,7 +58,7 @@ public sealed class SimPlayer : SimCharacter, ISimPartyMember
     // clears it is undone on the next one.
     private void SyncStatusAffliction()
     {
-        var status = AnyActiveStatusRow(row => row.LockMovement || row.LockActions);
+        var status = AnyActiveStatusRow(row => LocksMovement(row) || row.LockActions);
         var control = AnyActiveStatusRow(row => row.LockControl);
         var conditions = Natives.PlayerConditions;
         if (conditions.StatusAffliction != status || conditions.ControlAffliction != control)

@@ -17,6 +17,7 @@ public sealed class FruP3UltimateRelativityScenario : IScenario
 {
     public string Name => "Ultimate Relativity";
     public IPhase Phase => FruZone.P3;
+    public bool SupportsMultiplayer => true;
 
     public IReadOnlyList<IScenarioAi> AiStrats => [new FruP3UltimateRelativityAi(), new FruP3UltimateRelativityJpAi()];
 

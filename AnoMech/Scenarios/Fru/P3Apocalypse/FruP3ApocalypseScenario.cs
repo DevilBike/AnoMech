@@ -16,6 +16,7 @@ public sealed class FruP3ApocalypseScenario : IScenario
 {
     public string Name => "Apocalypse";
     public IPhase Phase => FruZone.P3;
+    public bool SupportsMultiplayer => true;
 
     public IReadOnlyList<IScenarioAi> AiStrats => [new FruP3ApocalypseAi(), new FruP3ApocalypseJpAi()];
 

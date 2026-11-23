@@ -16,6 +16,7 @@ public sealed class FruP2DiamondDustScenario : IScenario
 {
     public string Name => "Diamond Dust";
     public IPhase Phase => FruZone.P2;
+    public bool SupportsMultiplayer => true;
 
     public IReadOnlyList<IScenarioAi> AiStrats => [new FruP2DiamondDustAi(), new FruP2DiamondDustJpAi()];
 
@@ -23,9 +24,8 @@ public sealed class FruP2DiamondDustScenario : IScenario
     public object SettingsOverrides => settingsWindow.Overrides;
     private readonly FruP2DiamondDustSettingsWindow settingsWindow = new();
 
-    // UNVERIFIED: no pull has anyone in a live puddle. Retail players are still within 6y of one
-    // up to 1.23s after it shows, unhurt, so it arms no sooner than that.
-    private const float PuddleArmsAfterShowing = 1.5f;
+    // UNVERIFIED exactly when it arms: retail players stand in a fresh puddle past 1.5s unhurt.
+    private const float PuddleArmsAfterShowing = 2.2f;
     private const float PuddleLastsAfterShowing = 14.1f;
 
     private SimWorld world = null!;

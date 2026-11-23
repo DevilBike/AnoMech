@@ -40,6 +40,11 @@ public sealed class Game : IDisposable
     private InstanceSession? instance;
     private ScenarioSession? run;
     private ScenarioSession? endedRun;
+    private ScenarioSequence? sequence;
+
+    public string? SequenceProgress => sequence is { } steps
+        ? $"{steps.Index + 1}/{steps.Scenarios.Count}: {steps.Current.DisplayName()}{(steps.Waiting ? " (next one starting)" : "")}"
+        : null;
 
     public Game()
     {
@@ -147,26 +152,37 @@ public sealed class Game : IDisposable
     }
 
     // Null once the run is up, else why it was refused.
-    private string? StartScenarioNow(RunScenarioParams p)
+    // continuing: the sequence whose next step this is.
+    private string? StartScenarioNow(RunScenarioParams p, ScenarioSequence? continuing = null)
     {
         if (instance is null)
         {
             Plugin.Log.Warning($"Game: refusing to start {p.Scenario.Name} -- not in a zone.");
             return "not in a zone";
         }
+        var steps = continuing;
+        if (p.Scenario is IScenarioSequence all)
+        {
+            // Each step is a fresh local start that a peer would never hear of.
+            if (instance.Mode != SessionMode.Local) return $"{all.Name} only runs solo";
+            steps = new ScenarioSequence(all, p);
+        }
+        if (steps != null) p = steps.CurrentParams;
         if (ScenarioSession.Create(World, instance, p, out var refusal) is not { } next) return refusal;
 
         EndRun();
+        sequence = steps;
         run = next;
         run.Finished += OnRunFinished;
         run.MechanicFailed += OnMechanicFailed;
         run.Start();
-        RunStarted?.Invoke(p, instance.Mode == SessionMode.Local);
+        RunStarted?.Invoke(steps?.Requested ?? p, instance.Mode == SessionMode.Local);
         return null;
     }
     
     private void EndRun()
     {
+        sequence = null;
         if (run is { } ending)
         {
             run = null;
@@ -201,6 +217,13 @@ public sealed class Game : IDisposable
         Events.Tick(deltaSeconds * EventTimeScale);
         World.Tick(deltaSeconds * EventTimeScale);
         run?.Tick(deltaSeconds * EventTimeScale);
+        // Here, outside the scheduler and the world: starting a step clears both.
+        if (sequence is { } steps && steps.TickBetweenSteps(deltaSeconds))
+        {
+            steps.Advance();
+            var refusal = StartScenarioNow(steps.CurrentParams, steps);
+            if (refusal != null) Plugin.Log.Warning($"Game: {steps.Requested.Scenario.Name} stopped -- {refusal}.");
+        }
     }
 
     // Reports the death even in godmode, so the user learns what would have killed them; only the
@@ -240,7 +263,17 @@ public sealed class Game : IDisposable
         World.Dispose();
     }
     
-    private void OnRunFinished(bool clean) => RunFinished?.Invoke(clean);
+    // Mid-sequence a clean run starts the next step instead of finishing, so auto-restart and the
+    // streak see the whole sequence as one run.
+    private void OnRunFinished(bool clean)
+    {
+        if (clean && sequence is { HasNext: true } steps)
+        {
+            steps.FinishStep();
+            return;
+        }
+        RunFinished?.Invoke(clean);
+    }
     private void OnMechanicFailed(string reason) => MechanicFailed?.Invoke(reason);
     
 

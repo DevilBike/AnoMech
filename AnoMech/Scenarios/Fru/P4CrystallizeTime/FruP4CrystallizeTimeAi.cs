@@ -56,6 +56,7 @@ public sealed class FruP4CrystallizeTimeAi : IScenarioAi<FruP4CrystallizeTimeSta
         moveOrders.Clear();
         AssignSidesByPriority();
 
+        world.Events.Add(2f, () => MoveEveryBot(_ => Vector3.Zero, arriveBy: 6.5f));
         world.Events.Add(15.5f, () => FollowRoute(state.SlowNorthwest ? PRE_HG_1_NW : PRE_HG_1_NE, arriveBy: 22.7f));
         world.Events.Add(23.3f, () => FollowRoute(state.SlowNorthwest ? POST_HG_1_NW : POST_HG_1_NE, arriveBy: 25.9f));
         world.Events.Add(25.9f, RememberWhoAeroKnocksBack);

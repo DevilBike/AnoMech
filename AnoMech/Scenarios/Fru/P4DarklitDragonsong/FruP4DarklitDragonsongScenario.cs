@@ -19,6 +19,7 @@ public sealed class FruP4DarklitDragonsongScenario : IScenario
 {
     public string Name => "Darklit Dragonsong";
     public IPhase Phase => FruZone.P4;
+    public bool SupportsMultiplayer => true;
 
     public IReadOnlyList<IScenarioAi> AiStrats => [new FruP4DarklitDragonsongAi(playerBaitsSomberDance: false), new FruP4DarklitDragonsongAi(playerBaitsSomberDance: true), new FruP4DarklitDragonsongJpAi()];
 

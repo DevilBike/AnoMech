@@ -501,6 +501,9 @@ public unsafe class MainWindow : Window, IDisposable
         if (inSession) game.EventTimeScale = 1f;
 
         DrawScenarioHeader(game);
+        if (game.SequenceProgress is { } progress) ImGui.TextWrapped(progress);
+        else if (_selectedScenario is IScenarioSequence sequence)
+            ImGui.TextWrapped($"Runs {sequence.Scenarios.Count} scenarios back to back, solo, each with its NA strat.");
         if (inSession) DrawSession();
         DrawPrimaryActions(game, inSession);
         if (!inSession) DrawSoloOption(game);

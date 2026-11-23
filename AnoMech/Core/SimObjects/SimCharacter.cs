@@ -372,7 +372,12 @@ public abstract partial class SimCharacter : ISimObject, IPositioned
 
     // A status's Lock* flags don't stop anyone client-side: the local player only through the
     // server's conditions (SimPlayer), doppels not at all, so the sheet is read here.
-    public bool MovementLocked => AnyActiveStatusRow(row => row.LockMovement || row.LockControl);
+    // Statuses that root their holder in the fight though their Status row has no lock flag
+    // (FRU's Floating Fetters); a zone registers its own.
+    public static readonly HashSet<ushort> UnflaggedMovementLocks = [];
+    private protected static bool LocksMovement(StatusRow row) => row.LockMovement || UnflaggedMovementLocks.Contains(row.Id);
+
+    public bool MovementLocked => AnyActiveStatusRow(row => LocksMovement(row) || row.LockControl);
     public bool ActionsLocked => AnyActiveStatusRow(row => row.LockActions || row.LockControl);
 
     private protected bool AnyActiveStatusRow(Func<StatusRow, bool> predicate)

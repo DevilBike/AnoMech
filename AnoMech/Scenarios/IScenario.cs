@@ -56,11 +56,18 @@ public interface IScenario : IWorldEventListener
     void RunInstanceEvents(SimWorld world) { }
 }
 
+// A menu entry that runs its scenarios back to back, solo, each with its NA strat.
+public interface IScenarioSequence : IScenario
+{
+    IReadOnlyList<IScenario> Scenarios { get; }
+}
+
 public static class ScenarioExtensions
 {
     // Menu label, e.g. "P5 Delta".
     public static string DisplayName(this IScenario scenario)
     {
+        if (scenario is IScenarioSequence) return scenario.Name;
         var phase = scenario.Phase;
         return string.IsNullOrEmpty(phase.Name) ? scenario.Name : $"{phase.Name} {scenario.Name}";
     }

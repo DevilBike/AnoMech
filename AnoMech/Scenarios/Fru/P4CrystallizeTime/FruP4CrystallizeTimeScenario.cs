@@ -19,6 +19,7 @@ public sealed class FruP4CrystallizeTimeScenario : IScenario
 {
     public string Name => "Crystallize Time";
     public IPhase Phase => FruZone.P4;
+    public bool SupportsMultiplayer => true;
 
     public IReadOnlyList<IScenarioAi> AiStrats => strats;
     private readonly IReadOnlyList<IScenarioAi> strats = [new FruP4CrystallizeTimeAi(), new FruP4CrystallizeTimeJpAi()];
